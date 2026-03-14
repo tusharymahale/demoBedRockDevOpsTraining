@@ -1,14 +1,6 @@
 // Jenkinsfile for a Spring Boot application with build, SonarQube, Quality Gates, and Surefire reports
 
 pipeline {
-    agent {
-        // You can specify an agent here. Common options include:
-        // agent any // Run on any available agent
-        // agent { label 'my-linux-agent' } // Run on an agent with a specific label
-        // agent { docker { image 'maven:3.8.5-openjdk-17-slim' } } // Run inside a Docker container
-        agent any
-    }
-
 tools {
         // This MUST match the 'Name' you gave Maven in 
         // Manage Jenkins -> Global Tool Configuration
@@ -37,7 +29,7 @@ tools {
                 script {
                     echo 'Building the application...'
                     // Use a Maven wrapper if available, otherwise 'mvn'
-                    sh 'mvn clean install -DskipTests'
+                    sh 'mvn clean verify'
                 }
             }
             post {
