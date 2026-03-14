@@ -1,0 +1,30 @@
+<div class="chat-container">
+  <h1>Chat Application</h1>
+
+  <div class="chat-history">
+    <div *ngFor="let item of chatHistory" class="chat-item">
+      <div class="user-message">
+        <strong>You:</strong> {{ item.message }}
+      </div>
+      <div class="bot-reply">
+        <strong>Bot:</strong> {{ item.reply }}
+        <span class="latency">({{ item.latency }}ms)</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="input-container">
+    <input
+      [(ngModel)]="message"
+      (keyup.enter)="sendMessage()"
+      placeholder="Type your message..."
+      [disabled]="loading"
+    />
+    <button (click)="sendMessage()" [disabled]="loading">
+      {{ loading ? 'Sending...' : 'Send' }}
+    </button>
+  </div>
+</div>
+
