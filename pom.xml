@@ -98,8 +98,11 @@
                         <version>3.0.0-M7</version>
                         <configuration>
                             <!-- adjust if using JUnit 5 / platform; this is a sensible default -->
-                            <useModulePath>false</useModulePath>
-                        </configuration>
+				<useModulePath>false</useModulePath>
+				<useFile>true</useFile>
+				<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+		    </configuration>
+
                     </plugin>
 
                     <!-- JaCoCo: prepare agent before tests and generate report at verify -->
