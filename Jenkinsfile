@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
@@ -26,12 +25,11 @@ pipeline {
                 sh 'mvn test'
             }
         }           
-}
-
-    
+} 
    post {
-       always {
-        junit allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml'
+    always {
+        junit testResults: 'target/surefire-reports/TEST-*.xml', allowEmptyResults: true
+    }
        }
-   }
+   
 }
