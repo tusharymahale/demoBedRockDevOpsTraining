@@ -31,5 +31,4 @@ pipeline {
         junit testResults: 'target/surefire-reports/TEST-*.xml', allowEmptyResults: true
     }
        }
-   
 }
