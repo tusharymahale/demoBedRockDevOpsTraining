@@ -9,6 +9,12 @@ pipeline {
         agent any
     }
 
+tools {
+        // This MUST match the 'Name' you gave Maven in 
+        // Manage Jenkins -> Global Tool Configuration
+        maven 'maven' 
+    }
+
     environment {
         // SonarQube credentials (ensure this is configured in Jenkins Credentials Manager as a "Secret text")
         SONAR_SCANNER_HOME = tool 'SonarScanner' // Name of the SonarScanner tool configured in Jenkins
