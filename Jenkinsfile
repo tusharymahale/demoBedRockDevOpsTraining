@@ -20,6 +20,7 @@ pipeline {
                 waitForQualityGate abortPipeline: true
             }
         }
+        }
         stage('Test') {
             steps {
                 sh 'mvn test'
@@ -27,7 +28,7 @@ pipeline {
         }           
 }
 
-    }
+    
    post {
        always {
            junit 'target/surefire-reports/*.xml'
