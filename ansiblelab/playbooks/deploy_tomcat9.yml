@@ -59,10 +59,11 @@
         mode: '0644'
 
     - name: Start Tomcat
-      shell: "{{ tomcat_home }}/bin/startup.sh"---
-- name: Install Tomcat 9 and deploy WAR from Artifactory
-  hosts: tomcat_servers
-  become: yes
+      shell: "{{ tomcat_home }}/bin/startup.sh"
+    
+    - name: Install Tomcat 9 and deploy WAR from Artifactory
+      hosts: tomcat_servers
+      become: yes
   vars:
     tomcat_home: /opt/tomcat9
     tomcat_version: 9.0.89
