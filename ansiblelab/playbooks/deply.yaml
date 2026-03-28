@@ -1,0 +1,25 @@
+---
+- name: Deploy WAR to Tomcat
+  hosts: localhost
+  become: yes
+  vars:
+    tomcat_port: 5090
+    war_url: "https://localhost:8082/artifactory/libs-release-local/com/example/app/latest/app.war"
+    war_dest: "/opt/tomcat/latest/webapps/app.war"
+
+  tasks:
+    - name: Ensure Tomcat container is running
+      docker_container:
+        name: tomcat_server
+        image: tomcat:9.0
+        state: started
+        ports:
+          - "{{ tomcat_port }}:11011"
+        volumes:
+          - /opt/tomcat/webapps:/usr/local/tomcat/webapps
+
+    - name: Download latest WAR from Artifactory
+      get_url:
+        url: "{{ war_url }}"
+        dest: "{{ war_dest }}"
+        mode: '0644'
