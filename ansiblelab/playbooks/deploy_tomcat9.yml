@@ -7,7 +7,7 @@
     tomcat_version: 9.0.89
     tomcat_port: 11011
     war_file: demo-0.0.1-SNAPSHOT.war
-    artifactory_url: "http://localhost:8082/artifactory/libs-release-local/com/example/demo/0.0.1-SNAPSHOT/demo-0.0.1-SNAPSHOT.war"
+    artifactory_url: "http://localhost:8082/artifactory/libs-release-local/demo-0.0.1-SNAPSHOT.war"
     artifactory_user: admin
     artifactory_password: adminadmin
     war_dest: "{{ tomcat_home }}/webapps/{{ war_file }}"
