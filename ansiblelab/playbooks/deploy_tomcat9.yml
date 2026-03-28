@@ -33,10 +33,10 @@
       when: not (tomcat_home is directory)
 
     - name: Update Tomcat HTTP connector port
-      replace:
+      lineinfile:
         path: "{{ tomcat_home }}/conf/server.xml"
         regexp: '(<Connector port=")[0-9]+(" protocol="HTTP/1.1")'
-        replace: '\1{{ tomcat_port }}\2'
+        line: '<Connector port="{{ tomcat_port }}" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" />'
 
     - name: Stop Tomcat if running
       shell: "{{ tomcat_home }}/bin/shutdown.sh"
@@ -60,6 +60,5 @@
 
     - name: Start Tomcat
       shell: "{{ tomcat_home }}/bin/startup.sh"
-        args:
+      args:
         chdir: "{{ tomcat_home }}/bin"
-    
