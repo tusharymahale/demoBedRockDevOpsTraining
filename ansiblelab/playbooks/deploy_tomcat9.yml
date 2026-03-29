@@ -4,18 +4,18 @@
   become: yes
 
   vars:
-    artifactory_url: "https://your.jfrog.instance/artifactory/libs-release-local/demo-0.0.1-SNAPSHOT.war"
-    artifactory_user: "yourUser"
-    artifactory_password: "yourPassword"
+    artifactory_url: "http://localhost:8082/artifactory/libs-release-local/demo-0.0.1-SNAPSHOT.war"
+    artifactory_user: "admin"
+    artifactory_password: "adminadmin"
     war_file: demo-0.0.1-SNAPSHOT.war
     docker_image: tomcat:9-jdk11
     container_name: tomcat9_demo
 
   tasks:
-    - name: Ensure Docker is installed
-      package:
-        name: docker.io
-        state: present
+    #- name: Ensure Docker is installed
+    # package:
+    #   name: docker.io
+    #    state: present
 
     - name: Pull Tomcat image
       docker_image:
@@ -44,4 +44,4 @@
         ports:
           - "8080:8080"
         volumes:
-          - "/tmp/{{ war_file }}:/usr/local/tomcat/webapps/ROOT.war"
+          - "/tmp/{{ war_file }}:/usr/local/tomcat/webapps/demo.war"
