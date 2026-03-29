@@ -1,64 +1,47 @@
 ---
-- name: Install Tomcat 9 and deploy WAR from Artifactory
-  hosts: tomcat_servers
+- name: Deploy application on Tomcat (Docker)
+  hosts: docker_hosts
   become: yes
+
   vars:
-    tomcat_home: /opt/tomcat9
-    tomcat_version: 9.0.89
-    tomcat_port: 8080
+    artifactory_url: "https://your.jfrog.instance/artifactory/libs-release-local/demo-0.0.1-SNAPSHOT.war"
+    artifactory_user: "yourUser"
+    artifactory_password: "yourPassword"
     war_file: demo-0.0.1-SNAPSHOT.war
-    artifactory_url: "http://localhost:8082/artifactory/libs-release-local/demo-0.0.1-SNAPSHOT.war"
-    artifactory_user: admin
-    artifactory_password: adminadmin
-    war_dest: "{{ tomcat_home }}/webapps/{{ war_file }}"
+    docker_image: tomcat:9-jdk11
+    container_name: tomcat9_demo
 
   tasks:
-    - name: Ensure Java is installed
+    - name: Ensure Docker is installed
       package:
-        name: openjdk-11-jdk
+        name: docker.io
         state: present
 
-    - name: Download and extract Tomcat 9
-      unarchive:
-        src: "https://downloads.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
-        dest: /opt/
-        remote_src: yes
-      when: not (tomcat_home is directory)
+    - name: Pull Tomcat image
+      docker_image:
+        name: "{{ docker_image }}"
+        source: pull
 
-    - name: Symlink Tomcat home
-      file:
-        src: "/opt/apache-tomcat-{{ tomcat_version }}"
-        dest: "{{ tomcat_home }}"
-        state: link
-      when: not (tomcat_home is directory)
-
-        #    - name: Update Tomcat HTTP connector port
-        #     replace:
-        #        path: "{{ tomcat_home }}/conf/server.xml"
-        #       regexp: '<Connector port=".*protocol="HTTP/1.1".*redirectPort="8443".*/>'
-        #   replace: '<Connector port="{{ tomcat_port }}" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" />'
-
-    - name: Stop Tomcat if running
-      shell: "{{ tomcat_home }}/bin/shutdown.sh"
-      ignore_errors: yes
-
-    - name: Remove old WAR and exploded directory
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - "{{ war_dest }}"
-        - "{{ tomcat_home }}/webapps/{{ war_file | regex_replace('\\.war$', '') }}"
-
-    - name: Download WAR from Artifactory
+    - name: Download WAR from JFrog
       get_url:
         url: "{{ artifactory_url }}"
-        dest: "{{ war_dest }}"
+        dest: "/tmp/{{ war_file }}"
         url_username: "{{ artifactory_user }}"
         url_password: "{{ artifactory_password }}"
-        mode: '0644'
+        force_basic_auth: yes
 
-    - name: Start Tomcat
-      shell: "{{ tomcat_home }}/bin/startup.sh"
-      args:
-        chdir: "{{ tomcat_home }}/bin"
+    - name: Stop and remove old container if exists
+      docker_container:
+        name: "{{ container_name }}"
+        state: absent
+
+    - name: Run Tomcat container with WAR deployed
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ docker_image }}"
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
+        volumes:
+          - "/tmp/{{ war_file }}:/usr/local/tomcat/webapps/ROOT.war"
